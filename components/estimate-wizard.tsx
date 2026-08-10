@@ -337,6 +337,9 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
   if (done) {
     return (
       <div className="mx-auto flex max-w-3xl flex-col gap-4 print:gap-2">
+        <div className="hidden print:mb-2 print:block">
+          <img src="/ajd-logo.png" alt="아정당인테리어" className="mx-auto h-6 w-auto" />
+        </div>
         <div className="flex items-center justify-between print:hidden">
           <button
             type="button"
