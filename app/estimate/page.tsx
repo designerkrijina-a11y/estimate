@@ -18,7 +18,10 @@ export default async function EstimatePage() {
     <main className="min-h-screen bg-background text-foreground print:min-h-0">
       <header className="border-b border-border bg-muted/60 py-14 text-center print:hidden">
         <div className="mx-auto max-w-2xl px-4">
-          <p className="text-sm font-semibold tracking-wide text-primary">아정당인테리어 · 오피스 인테리어</p>
+          <p className="inline-flex items-center gap-1.5 text-sm font-semibold tracking-wide text-primary">
+            <img src="/ajd-logo.png" alt="아정당인테리어" className="h-4 w-auto" />
+            <span>· 오피스 인테리어</span>
+          </p>
           <h1 className="mt-3 text-pretty text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             1:1 맞춤 견적으로
             <br className="md:hidden" /> 예산 낭비 없이 설계해드립니다
