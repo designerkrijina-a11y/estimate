@@ -238,6 +238,7 @@ export default async function AdminPage({
                   <th className="px-4 py-3 font-medium text-muted-foreground">견적금액</th>
                   <th className="px-4 py-3 font-medium text-muted-foreground">담당자</th>
                   <th className="px-4 py-3 font-medium text-muted-foreground">연락처</th>
+                  <th className="px-4 py-3 font-medium text-muted-foreground"></th>
                 </tr>
               </thead>
               <tbody>
@@ -264,6 +265,11 @@ export default async function AdminPage({
                           <span className="text-xs text-muted-foreground">{row.contact_email}</span>
                         )}
                       </div>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      <Link href={`/admin/${row.id}`} className="font-medium text-primary hover:underline">
+                        견적서 보기 →
+                      </Link>
                     </td>
                   </tr>
                 ))}
