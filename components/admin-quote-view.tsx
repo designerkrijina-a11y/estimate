@@ -68,6 +68,9 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 print:gap-2">
+      <div className="hidden print:mb-1 print:block">
+        <img src="/ajd-logo.png" alt="아정당인테리어" className="mx-auto h-4 w-auto" />
+      </div>
       <div className="flex items-center justify-between print:hidden">
         <Link href="/admin" className="text-sm font-medium text-muted-foreground hover:text-foreground">
           ← 목록으로
@@ -83,17 +86,17 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
           className="overflow-hidden border-none p-0 text-white"
           style={{ background: `linear-gradient(135deg, #162163, ${BRAND})` }}
         >
-          <CardContent className="flex flex-col gap-6 p-6 print:gap-3 print:p-4 md:p-8">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="flex flex-col gap-1">
-                <p className="text-xs font-medium text-white/60">{request.id.slice(0, 8).toUpperCase()}</p>
-                <h2 className="text-2xl font-bold print:text-xl md:text-3xl">{request.contact_name || "회사명 미입력"}</h2>
-                <p className="text-sm text-white/70">오피스 인테리어 Fit Out · {gradeLabel}</p>
-                <p className="mt-1 text-xs text-white/60">
+          <CardContent className="flex flex-col gap-6 p-6 print:gap-1.5 print:p-3 md:p-8">
+            <div className="flex flex-wrap items-start justify-between gap-4 print:gap-1">
+              <div className="flex flex-col gap-1 print:gap-0.5">
+                <p className="text-xs font-medium text-white/60 print:text-[8px]">{request.id.slice(0, 8).toUpperCase()}</p>
+                <h2 className="text-2xl font-bold print:text-base md:text-3xl">{request.contact_name || "회사명 미입력"}</h2>
+                <p className="text-sm text-white/70 print:text-[9px] print:leading-tight">오피스 인테리어 Fit Out · {gradeLabel}</p>
+                <p className="mt-1 text-xs text-white/60 print:mt-0 print:text-[8px]">
                   연락처: {request.contact_phone || "-"} · {request.contact_email || "-"}
                 </p>
               </div>
-              <div className="text-right text-xs text-white/60">
+              <div className="text-right text-xs text-white/60 print:text-[8px]">
                 <p>접수일 {fmt(createdDate)}</p>
                 <p>유효기간 {fmt(validUntil)}</p>
               </div>
@@ -102,33 +105,33 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
             <div className="h-px bg-white/15" />
 
             <div>
-              <p className="text-sm text-white/60">총 공사비 (VAT 별도)</p>
-              <p className="text-3xl font-bold tracking-tight print:text-2xl md:text-4xl">₩{won.format(total)}</p>
-              <p className="mt-1 text-sm text-white/60">{numberToKoreanWon(total)}</p>
+              <p className="text-sm text-white/60 print:text-[9px]">총 공사비 (VAT 별도)</p>
+              <p className="text-3xl font-bold tracking-tight print:text-lg md:text-4xl">₩{won.format(total)}</p>
+              <p className="mt-1 text-sm text-white/60 print:mt-0 print:text-[8px]">{numberToKoreanWon(total)}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3 print:gap-1 sm:grid-cols-4">
-              <div className="rounded-lg bg-white/10 p-3 print:p-1.5">
-                <p className="text-xs text-white/60 print:text-[9px] print:leading-tight">전용면적</p>
-                <p className="text-sm font-semibold print:text-xs print:leading-tight">{won.format(pyeongNum)}평</p>
-                <p className="text-xs text-white/50 print:text-[8px] print:leading-tight">{won.format(areaSqm)}㎡</p>
+              <div className="rounded-lg bg-white/10 p-3 print:p-1">
+                <p className="text-xs text-white/60 print:text-[8px] print:leading-tight">전용면적</p>
+                <p className="text-sm font-semibold print:text-[10px] print:leading-tight">{won.format(pyeongNum)}평</p>
+                <p className="text-xs text-white/50 print:text-[7px] print:leading-tight">{won.format(areaSqm)}㎡</p>
               </div>
-              <div className="rounded-lg bg-white/10 p-3 print:p-1.5">
-                <p className="text-xs text-white/60 print:text-[9px] print:leading-tight">평당 단가</p>
-                <p className="text-sm font-semibold print:text-xs print:leading-tight">
+              <div className="rounded-lg bg-white/10 p-3 print:p-1">
+                <p className="text-xs text-white/60 print:text-[8px] print:leading-tight">평당 단가</p>
+                <p className="text-sm font-semibold print:text-[10px] print:leading-tight">
                   {won.format(Math.round(pricePerPyeong / 10_000))}만원
                 </p>
-                <p className="text-xs text-white/50 print:text-[8px] print:leading-tight">원/평</p>
+                <p className="text-xs text-white/50 print:text-[7px] print:leading-tight">원/평</p>
               </div>
-              <div className="rounded-lg bg-white/10 p-3 print:p-1.5">
-                <p className="text-xs text-white/60 print:text-[9px] print:leading-tight">마감등급</p>
-                <p className="text-sm font-semibold print:text-xs print:leading-tight">{gradeLabel}</p>
-                <p className="text-xs text-white/50 print:text-[8px] print:leading-tight">마감 기준</p>
+              <div className="rounded-lg bg-white/10 p-3 print:p-1">
+                <p className="text-xs text-white/60 print:text-[8px] print:leading-tight">마감등급</p>
+                <p className="text-sm font-semibold print:text-[10px] print:leading-tight">{gradeLabel}</p>
+                <p className="text-xs text-white/50 print:text-[7px] print:leading-tight">마감 기준</p>
               </div>
-              <div className="rounded-lg bg-white/10 p-3 print:p-1.5">
-                <p className="text-xs text-white/60 print:text-[9px] print:leading-tight">포함 공정</p>
-                <p className="text-sm font-semibold print:text-xs print:leading-tight">{includedWorkCount}개</p>
-                <p className="text-xs text-white/50 print:text-[8px] print:leading-tight">공정 산출</p>
+              <div className="rounded-lg bg-white/10 p-3 print:p-1">
+                <p className="text-xs text-white/60 print:text-[8px] print:leading-tight">포함 공정</p>
+                <p className="text-sm font-semibold print:text-[10px] print:leading-tight">{includedWorkCount}개</p>
+                <p className="text-xs text-white/50 print:text-[7px] print:leading-tight">공정 산출</p>
               </div>
             </div>
           </CardContent>
