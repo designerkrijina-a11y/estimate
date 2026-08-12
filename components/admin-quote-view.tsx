@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { Printer } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -14,6 +15,7 @@ import {
   selectedRoomItems,
   selectedWorkItems,
 } from "@/lib/estimate-calc"
+import { setupPrintPageBreakNotices } from "@/lib/print-pagination"
 import type { PricingConfig } from "@/lib/pricing"
 import type { RoomComposition } from "@/app/estimate/actions"
 
@@ -66,6 +68,10 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
   const validUntil = new Date(createdDate.getTime() + 30 * 24 * 60 * 60 * 1000)
   const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })
 
+  useEffect(() => {
+    return setupPrintPageBreakNotices()
+  }, [])
+
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 print:gap-2">
       <div className="hidden print:mb-1 print:block">
@@ -81,7 +87,7 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
         </Button>
       </div>
 
-      <div className="grade-quote-block flex flex-col gap-4 print:gap-2">
+      <div data-print-block className="grade-quote-block flex flex-col gap-4 print:gap-2">
         <Card
           className="overflow-hidden border-none p-0 text-white"
           style={{ background: `linear-gradient(135deg, #162163, ${BRAND})` }}
@@ -240,7 +246,14 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
           </CardContent>
         </Card>
 
-        <Card>
+        <p
+          data-print-break-notice
+          className="hidden text-center text-[10px] font-semibold tracking-wide text-muted-foreground print:break-after-avoid"
+        >
+          — 다음 장으로 이어집니다 —
+        </p>
+
+        <Card data-print-break-anchor className="print:break-inside-avoid">
           <CardHeader>
             <CardTitle className="text-base print:text-xs">참고사항</CardTitle>
           </CardHeader>

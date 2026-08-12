@@ -24,6 +24,7 @@ import {
   selectedWorkItems,
   type EstimateContext,
 } from "@/lib/estimate-calc"
+import { setupPrintPageBreakNotices } from "@/lib/print-pagination"
 
 const PYEONG_TO_SQM = 3.3
 
@@ -205,6 +206,11 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [stepError, setStepError] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (!done) return
+    return setupPrintPageBreakNotices()
+  }, [done])
+
   function handlePyeongChange(v: string) {
     setPyeong(v)
     const n = Number.parseFloat(v)
@@ -366,7 +372,7 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
           const pricePerPyeong = pyeongNum > 0 ? Math.round(e.total / pyeongNum) : 0
           const gradeLabel = FINISH_GRADES.find((f) => f.value === e.grade)?.label ?? e.grade
           return (
-            <div key={e.grade} className="grade-quote-block flex flex-col gap-4 print:gap-2">
+            <div key={e.grade} data-print-block className="grade-quote-block flex flex-col gap-4 print:gap-2">
               {estimates.length > 1 && (
                 <p className="text-xs font-semibold text-muted-foreground print:hidden">
                   비교안 {idx + 1}/{estimates.length} · {gradeLabel}
@@ -521,7 +527,14 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
                 </CardContent>
               </Card>
 
-              <Card>
+              <p
+                data-print-break-notice
+                className="hidden text-center text-[10px] font-semibold tracking-wide text-muted-foreground print:break-after-avoid"
+              >
+                — 다음 장으로 이어집니다 —
+              </p>
+
+              <Card data-print-break-anchor className="print:break-inside-avoid">
                 <CardHeader>
                   <CardTitle className="text-base print:text-xs">참고사항</CardTitle>
                 </CardHeader>
