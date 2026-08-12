@@ -17,6 +17,14 @@ export default async function EstimatePage() {
   return (
     <main className="min-h-screen bg-background text-foreground print:min-h-0">
       <header className="border-b border-border bg-muted/60 py-14 text-center print:hidden">
+        <div className="mx-auto mb-6 max-w-6xl px-4 text-left">
+          <a
+            href="https://estimate-hub-nine.vercel.app/"
+            className="text-sm font-medium text-muted-foreground hover:text-primary"
+          >
+            ← 전체 업종 보기
+          </a>
+        </div>
         <div className="mx-auto max-w-2xl px-4">
           <p className="inline-flex items-center gap-1.5 text-sm font-semibold tracking-wide text-primary">
             <img src="/ajd-logo.png" alt="아정당인테리어" className="h-4 w-auto" />
