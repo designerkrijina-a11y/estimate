@@ -11,6 +11,8 @@ import {
   won,
   numberToKoreanWon,
   computeEstimateForGrade,
+  selectedRoomItems,
+  selectedWorkItems,
 } from "@/lib/estimate-calc"
 import type { PricingConfig } from "@/lib/pricing"
 import type { RoomComposition } from "@/app/estimate/actions"
@@ -58,6 +60,8 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
   const total = request.estimated_price ?? recomputed?.total ?? 0
   const pricePerPyeong = pyeongNum > 0 ? Math.round(total / pyeongNum) : 0
   const includedWorkCount = RECOMMENDED_WORK_TYPES.length + (request.included_work_types?.length ?? 0)
+  const roomItemsSelected = request.room_composition ? selectedRoomItems(request.room_composition) : []
+  const workItemsSelected = selectedWorkItems(request.included_work_types ?? [])
   const createdDate = new Date(request.created_at)
   const validUntil = new Date(createdDate.getTime() + 30 * 24 * 60 * 60 * 1000)
   const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })
@@ -187,6 +191,48 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
                 <p className="text-xs text-muted-foreground print:text-[9px] print:leading-tight">{item.label}</p>
                 <p className="text-sm font-semibold print:text-xs print:leading-tight">{item.value}</p>
               </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {roomItemsSelected.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base print:text-xs">선택하신 공간 구성</CardTitle>
+              <CardDescription>견적 산출에 반영된 공간별 구성 내역입니다.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-1.5">
+              {roomItemsSelected.map((item) => (
+                <span
+                  key={item.key}
+                  className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 px-2.5 py-1 text-xs print:px-1.5 print:py-0.5 print:text-[9px]"
+                >
+                  <span>{item.icon}</span>
+                  <span>{item.label}</span>
+                  {item.count != null && <span className="font-semibold">× {item.count}</span>}
+                </span>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base print:text-xs">포함된 공종</CardTitle>
+            <CardDescription>기본 포함 공정과 추가로 선택하신 공종입니다.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-1.5">
+            {workItemsSelected.map((item) => (
+              <span
+                key={item.key}
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs print:px-1.5 print:py-0.5 print:text-[9px] ${
+                  item.base ? "border-border bg-muted/40" : "border-primary/30 bg-primary/10 text-primary"
+                }`}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+                {!item.base && <span className="text-[10px] print:text-[8px]">(선택)</span>}
+              </span>
             ))}
           </CardContent>
         </Card>

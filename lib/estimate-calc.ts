@@ -72,6 +72,35 @@ export function numberToKoreanWon(num: number) {
   return `일금 ${parts.join(" ")}원정`
 }
 
+export type SelectedRoomItem = { key: string; icon: string; label: string; count?: number }
+
+export function selectedRoomItems(rooms: RoomComposition): SelectedRoomItem[] {
+  const roomsRecord = rooms as unknown as Record<string, number | boolean>
+  const counters = ROOM_COUNTERS.flatMap((r) => {
+    const v = roomsRecord[r.key]
+    return typeof v === "number" && v > 0 ? [{ key: r.key, icon: r.icon, label: r.label, count: v }] : []
+  })
+  const toggles = ROOM_TOGGLES.flatMap((r) => {
+    const v = roomsRecord[r.key]
+    return typeof v === "boolean" && v ? [{ key: r.key, icon: r.icon, label: r.label }] : []
+  })
+  return [...counters, ...toggles]
+}
+
+export type SelectedWorkItem = { key: string; icon: string; label: string; base: boolean }
+
+export function selectedWorkItems(includedWorkTypes: string[] | Set<string>): SelectedWorkItem[] {
+  const optionalSet = includedWorkTypes instanceof Set ? includedWorkTypes : new Set(includedWorkTypes)
+  const base = RECOMMENDED_WORK_TYPES.map((w) => ({ key: w.key, icon: w.icon, label: w.label, base: true }))
+  const optional = OPTIONAL_WORK_TYPES.filter((w) => optionalSet.has(w.key)).map((w) => ({
+    key: w.key,
+    icon: w.icon,
+    label: w.label,
+    base: false,
+  }))
+  return [...base, ...optional]
+}
+
 export type EstimateContext = {
   areaSqm: number
   employees: number
