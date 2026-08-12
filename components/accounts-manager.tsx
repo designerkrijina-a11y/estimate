@@ -161,7 +161,7 @@ export function AccountsManager({
                   </select>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                  {new Date(row.created_at).toLocaleDateString("ko-KR")}
+                  {new Date(row.created_at).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-right">
                   {row.login_id !== currentLoginId && (

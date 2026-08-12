@@ -281,7 +281,8 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
   const { issueDateStr, validUntilStr } = useMemo(() => {
     const now = new Date()
     const valid = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
-    const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })
+    const fmt = (d: Date) =>
+      d.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "long", day: "numeric" })
     return { issueDateStr: fmt(now), validUntilStr: fmt(valid) }
   }, [done])
 

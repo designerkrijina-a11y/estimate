@@ -66,7 +66,8 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
   const workItemsSelected = selectedWorkItems(request.included_work_types ?? [])
   const createdDate = new Date(request.created_at)
   const validUntil = new Date(createdDate.getTime() + 30 * 24 * 60 * 60 * 1000)
-  const fmt = (d: Date) => d.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "long", day: "numeric" })
 
   useEffect(() => {
     return setupPrintPageBreakNotices()

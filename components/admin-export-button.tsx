@@ -25,7 +25,7 @@ export function AdminExportButton({ rows }: { rows: ExportRow[] }) {
     try {
       const XLSX = await import("xlsx")
       const data = rows.map((r) => ({
-        접수일시: new Date(r.created_at).toLocaleString("ko-KR"),
+        접수일시: new Date(r.created_at).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
         평수: r.pyeong ?? "",
         전용면적_m2: r.area_sqm ?? "",
         직원수: r.employee_count ?? "",
