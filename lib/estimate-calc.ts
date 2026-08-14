@@ -108,6 +108,7 @@ export type EstimateContext = {
   constructionTime: string
   rooms: RoomComposition
   workTypes: Set<string>
+  costRatePct?: number
 }
 
 export function computeEstimateForGrade(gradeValue: string, ctx: EstimateContext, pricing: PricingConfig) {
@@ -148,7 +149,8 @@ export function computeEstimateForGrade(gradeValue: string, ctx: EstimateContext
 
   const subtotal = finishBase + buildingAdj + roomsCost + optionalCost
   const timeSurcharge = subtotal * timeMod
-  const total = roundToTenThousand(subtotal + timeSurcharge)
+  const costRateMod = (ctx.costRatePct ?? 0) / 100
+  const total = roundToTenThousand((subtotal + timeSurcharge) * (1 + costRateMod))
 
   const cats = [
     { label: "마감 공사 (기본)", value: finishBase + buildingAdj },

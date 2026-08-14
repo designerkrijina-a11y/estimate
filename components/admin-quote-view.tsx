@@ -31,6 +31,7 @@ export type EstimateRequestDetail = {
   construction_time: string | null
   included_work_types: string[] | null
   room_composition: RoomComposition | null
+  cost_rate_pct: number | null
   estimated_price: number | null
   contact_name: string | null
   contact_phone: string | null
@@ -54,6 +55,7 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
           constructionTime: request.construction_time ?? "주간",
           rooms: request.room_composition,
           workTypes: new Set(request.included_work_types ?? []),
+          costRatePct: request.cost_rate_pct ?? 0,
         },
         pricing
       )
@@ -87,6 +89,12 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
           인쇄하기
         </Button>
       </div>
+
+      {!!request.cost_rate_pct && (
+        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs font-medium leading-relaxed text-amber-700 print:hidden dark:text-amber-400">
+          🔒 직원 전용 — 이 견적에는 공사비 요율 {request.cost_rate_pct}%가 적용되어 있습니다. (고객 견적서에는 표시되지 않음)
+        </div>
+      )}
 
       <div data-print-block className="grade-quote-block flex flex-col gap-4 print:gap-2">
         <Card

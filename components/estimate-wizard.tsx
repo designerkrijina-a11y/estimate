@@ -193,6 +193,7 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
   const [workTypes, setWorkTypes] = useState<Set<string>>(new Set())
 
   const [constructionTime, setConstructionTime] = useState<ConstructionTime | "">("")
+  const [costRatePct, setCostRatePct] = useState("0")
 
   const [companyName, setCompanyName] = useState("")
   const [position, setPosition] = useState("")
@@ -226,6 +227,7 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
   const areaSqm = Number.parseFloat(sqm) || 0
   const pyeongNum = Number.parseFloat(pyeong) || 0
   const employees = Number.parseInt(employeeCount, 10) || 0
+  const costRatePctNum = Number.parseFloat(costRatePct) || 0
 
   function toggleFinishGrade(value: FinishGrade) {
     setFinishGrades((prev) => {
@@ -273,10 +275,18 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
   const includedWorkCount = RECOMMENDED_WORK_TYPES.length + workTypes.size
 
   const estimates = useMemo(() => {
-    const ctx: EstimateContext = { areaSqm, employees, buildingGrade, constructionTime, rooms, workTypes }
+    const ctx: EstimateContext = {
+      areaSqm,
+      employees,
+      buildingGrade,
+      constructionTime,
+      rooms,
+      workTypes,
+      costRatePct: costRatePctNum,
+    }
     const grades = finishGrades.size > 0 ? Array.from(finishGrades) : ["중급" as FinishGrade]
     return grades.map((g) => computeEstimateForGrade(g, ctx, pricing))
-  }, [areaSqm, employees, buildingGrade, constructionTime, rooms, workTypes, finishGrades, pricing])
+  }, [areaSqm, employees, buildingGrade, constructionTime, rooms, workTypes, costRatePctNum, finishGrades, pricing])
 
   const { issueDateStr, validUntilStr } = useMemo(() => {
     const now = new Date()
@@ -324,6 +334,7 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
           construction_time: (constructionTime || "주간") as ConstructionTime,
           included_work_types: Array.from(workTypes),
           room_composition: rooms,
+          cost_rate_pct: costRatePctNum,
           estimated_price: e.total,
           company_name: companyName.trim(),
           position: position.trim(),
@@ -853,6 +864,36 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
             </div>
             <p className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-xs font-bold leading-relaxed text-amber-700 dark:text-amber-400">
               💡 건물 내 다른 입주사가 있는 경우, 소음·분진 공사는 야간/주말 진행이 일반적입니다. 이 경우 부분 야간 이상을 선택하세요.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {step === 3 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <span className="text-xl">📐</span>
+              공사비 요율 (담당자 전용)
+            </CardTitle>
+            <CardDescription>
+              면적이 넓어 여러 층으로 나뉘어 진행되는 등 간접공사비가 추가로 필요한 경우에만 담당자가 입력합니다. 일반적인 경우 0%로 두세요.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <Label htmlFor="costRatePct">공사비 요율</Label>
+            <div className="relative max-w-[160px]">
+              <Input
+                id="costRatePct"
+                inputMode="decimal"
+                value={costRatePct}
+                onChange={(e) => setCostRatePct(e.target.value)}
+                className="pr-8"
+              />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              이 요율은 최종 견적금액에는 반영되지만, 고객에게 전달되는 견적서에는 별도로 표시되지 않습니다.
             </p>
           </CardContent>
         </Card>

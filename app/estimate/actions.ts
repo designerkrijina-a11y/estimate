@@ -25,6 +25,7 @@ export type EstimateSubmission = {
   construction_time: "주간" | "부분야간" | "전면야간" | "주말야간"
   included_work_types: string[]
   room_composition: RoomComposition
+  cost_rate_pct: number
   estimated_price: number
   company_name: string
   position: string
@@ -46,6 +47,7 @@ export async function submitEstimate(input: EstimateSubmission) {
     construction_time: input.construction_time,
     included_work_types: input.included_work_types,
     room_composition: input.room_composition,
+    cost_rate_pct: input.cost_rate_pct,
     estimated_price: input.estimated_price,
     contact_name: input.company_name || null,
     contact_phone: input.contact_phone || null,
