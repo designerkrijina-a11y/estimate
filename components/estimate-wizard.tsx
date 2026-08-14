@@ -203,6 +203,7 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
 
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [estimateNumber, setEstimateNumber] = useState("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [stepError, setStepError] = useState<string | null>(null)
@@ -312,7 +313,7 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
     setStep((s) => Math.max(s - 1, 0))
   }
 
-  async function handleFinalSubmit() {
+  function handleFinalSubmit() {
     setStepError(null)
     if (!companyName.trim()) return setStepError("회사명을 입력해주세요.")
     if (!position.trim()) return setStepError("직급/직책을 입력해주세요.")
@@ -320,38 +321,57 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
     if (!phone.trim()) return setStepError("연락처를 입력해주세요.")
     if (!consent) return setStepError("개인정보 수집 및 이용에 동의해주세요.")
 
-    setSubmitting(true)
+    // 여기서는 화면에 견적서를 보여주기만 하고 DB에는 저장하지 않는다.
+    // 실제 접수(저장)는 마지막 화면에서 "인쇄하기"를 눌렀을 때 한 번만 일어난다.
+    // (이전 화면으로 돌아가 기준을 바꿔가며 여러 번 다시 산출해도 인쇄하기 전에는 중복 접수되지 않는다.)
     setErrorMsg(null)
-    const results = await Promise.all(
-      estimates.map((e) =>
-        submitEstimate({
-          pyeong: pyeongNum,
-          area_sqm: areaSqm,
-          employee_count: employees,
-          building_grade: buildingGrade,
-          construction_type: constructionType,
-          finish_grade: e.grade as FinishGrade,
-          construction_time: (constructionTime || "주간") as ConstructionTime,
-          included_work_types: Array.from(workTypes),
-          room_composition: rooms,
-          cost_rate_pct: costRatePctNum,
-          estimated_price: e.total,
-          company_name: companyName.trim(),
-          position: position.trim(),
-          contact_phone: phone.trim(),
-          contact_email: email.trim(),
-          privacy_consent: consent,
-        })
+    setDone(true)
+  }
+
+  async function handlePrint() {
+    if (!submitted) {
+      setSubmitting(true)
+      setErrorMsg(null)
+      const results = await Promise.all(
+        estimates.map((e) =>
+          submitEstimate({
+            pyeong: pyeongNum,
+            area_sqm: areaSqm,
+            employee_count: employees,
+            building_grade: buildingGrade,
+            construction_type: constructionType,
+            finish_grade: e.grade as FinishGrade,
+            construction_time: (constructionTime || "주간") as ConstructionTime,
+            included_work_types: Array.from(workTypes),
+            room_composition: rooms,
+            cost_rate_pct: costRatePctNum,
+            estimated_price: e.total,
+            company_name: companyName.trim(),
+            position: position.trim(),
+            contact_phone: phone.trim(),
+            contact_email: email.trim(),
+            privacy_consent: consent,
+          })
+        )
       )
-    )
-    setSubmitting(false)
-    const failed = results.find((r) => !r.ok)
-    if (!failed) {
+      setSubmitting(false)
+      const failed = results.find((r) => !r.ok)
+      if (failed) {
+        setErrorMsg(failed.error ?? "제출 중 오류가 발생했습니다.")
+        return
+      }
       setEstimateNumber(generateEstimateNumber())
-      setDone(true)
-    } else {
-      setErrorMsg(failed.error ?? "제출 중 오류가 발생했습니다.")
+      setSubmitted(true)
     }
+    window.print()
+  }
+
+  function handleRestart() {
+    setStep(0)
+    setDone(false)
+    setSubmitted(false)
+    setEstimateNumber("")
+    setErrorMsg(null)
   }
 
   if (done) {
@@ -366,17 +386,14 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
         <div className="flex items-center justify-between print:hidden">
           <button
             type="button"
-            onClick={() => {
-              setStep(0)
-              setDone(false)
-            }}
+            onClick={handleRestart}
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
           >
-            ← 처음으로 (입력값 유지)
+            ← {submitted ? "복사하기 (동일 기준으로 수정)" : "처음으로 (입력값 유지)"}
           </button>
-          <Button type="button" variant="outline" onClick={() => window.print()}>
+          <Button type="button" variant="outline" onClick={handlePrint} disabled={submitting}>
             <Printer className="size-4" />
-            인쇄하기
+            {submitting ? "저장 중..." : "인쇄하기"}
           </Button>
         </div>
 
@@ -570,11 +587,25 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
 
         <Card style={{ borderColor: `${BRAND}33` }} className="text-center print:hidden">
           <CardContent className="flex flex-col items-center gap-2 py-8 print:py-3">
-            <CheckCircle2 className="size-10" style={{ color: BRAND }} />
-            <p className="text-lg font-bold">접수가 완료되었습니다</p>
-            <p className="text-sm text-muted-foreground">
-              담당자가 견적 내용을 검토 후, 24시간 이내로 {email} 또는 {phone}으로 연락드립니다.
-            </p>
+            {submitted ? (
+              <>
+                <CheckCircle2 className="size-10" style={{ color: BRAND }} />
+                <p className="text-lg font-bold">접수가 완료되었습니다</p>
+                <p className="text-sm text-muted-foreground">
+                  담당자가 견적 내용을 검토 후, 24시간 이내로 {email} 또는 {phone}으로 연락드립니다.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-lg font-bold">견적 내용을 확인해주세요</p>
+                <p className="text-sm text-muted-foreground">
+                  내용을 확인하신 후 위의 "인쇄하기"를 누르면 접수가 완료됩니다.
+                </p>
+              </>
+            )}
+            {errorMsg && (
+              <p className="mt-2 w-full rounded-md bg-destructive/10 p-2.5 text-sm text-destructive">{errorMsg}</p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -958,8 +989,8 @@ export function EstimateWizard({ pricing = DEFAULT_PRICING }: { pricing?: Pricin
             <ArrowRight className="size-4" />
           </Button>
         ) : (
-          <Button type="button" onClick={handleFinalSubmit} disabled={submitting}>
-            {submitting ? "생성 중..." : "📊 견적서 받기"}
+          <Button type="button" onClick={handleFinalSubmit}>
+            📊 견적서 받기
           </Button>
         )}
       </div>
