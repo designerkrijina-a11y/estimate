@@ -40,10 +40,7 @@ export default async function EstimatePage() {
           </p>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-4 py-10 print:py-2 md:px-8">
-        <div className="hidden text-center print:mb-6 print:block print:gap-0.5">
-          <p className="text-[10px] font-semibold leading-snug text-primary">오피스 인테리어 견적 계산기</p>
-        </div>
+      <div className="mx-auto max-w-6xl px-4 py-10 print:pb-2 print:pt-0 md:px-8">
         <EstimateWizard pricing={pricing} />
       </div>
     </main>
