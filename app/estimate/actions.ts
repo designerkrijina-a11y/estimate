@@ -50,6 +50,7 @@ export async function submitEstimate(input: EstimateSubmission) {
     cost_rate_pct: input.cost_rate_pct,
     estimated_price: input.estimated_price,
     contact_name: input.company_name || null,
+    position: input.position || null,
     contact_phone: input.contact_phone || null,
     contact_email: input.contact_email || null,
     privacy_consent: input.privacy_consent,

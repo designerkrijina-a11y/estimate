@@ -34,6 +34,7 @@ export type EstimateRequestDetail = {
   cost_rate_pct: number | null
   estimated_price: number | null
   contact_name: string | null
+  position: string | null
   contact_phone: string | null
   contact_email: string | null
 }
@@ -108,7 +109,7 @@ export function AdminQuoteView({ request, pricing }: { request: EstimateRequestD
                 <h2 className="text-2xl font-bold print:text-base md:text-3xl">{request.contact_name || "회사명 미입력"}</h2>
                 <p className="text-sm text-white/70 print:text-[9px] print:leading-tight">오피스 인테리어 Fit Out · {gradeLabel}</p>
                 <p className="mt-1 text-xs text-white/60 print:mt-0 print:text-[8px]">
-                  연락처: {request.contact_phone || "-"} · {request.contact_email || "-"}
+                  담당: {request.position || "-"} · {request.contact_phone || "-"} · {request.contact_email || "-"}
                 </p>
               </div>
               <div className="text-right text-xs text-white/60 print:text-[8px]">
